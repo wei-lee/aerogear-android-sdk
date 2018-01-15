@@ -13,10 +13,30 @@ import java.util.Map;
  * This class represent an authenticated user
  */
 public class UserPrincipalImpl extends AbstractPrincipal {
+
+    /**
+     * The username of the principal.
+     */
     private final String username;
+
+    /**
+     * Roles associated with this principal.
+     */
     private final Map<String, IRole> roles;
+
+    /**
+     * Authentication token associated with this principal.
+     */
     private final TokenCredentials token;
 
+    /**
+     * Builds a new UserPrincipal object
+     *
+     * @param username
+     * @param roles
+     * @param token
+     * @param authenticator
+     */
     private UserPrincipalImpl(final String username, Map<String, IRole> roles, final TokenCredentials token, final AbstractAuthenticator authenticator) {
         super(authenticator);
         this.username = username;

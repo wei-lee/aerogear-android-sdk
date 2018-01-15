@@ -22,6 +22,10 @@ public class AbstractAuthenticator {
         throw new IllegalStateException("Not implemented");
     }
 
+    /**
+     * Logout the given principal
+     * @param principal principal to be log out
+     */
     public void logout(Principal principal) {
         throw new IllegalStateException("Not implemented");
     }

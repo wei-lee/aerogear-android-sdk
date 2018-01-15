@@ -13,6 +13,10 @@ public final class PasswordCredentials implements ICredential {
         this.password = Arrays.copyOf(password, password.length);
     }
 
+    /**
+     * Return the password.
+     * @return the password
+     */
     public char[] getPassword() {
         return Arrays.copyOf(password, password.length);
     }
