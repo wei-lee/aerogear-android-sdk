@@ -11,11 +11,11 @@ public class AuthService {
      * Instantiates a new AuthService object
      * @param config Authentication Service configuration
      */
-    public AuthService(AuthServiceConfig config) {
+    public AuthService(final AuthServiceConfig config) {
         this.config = config;
     }
 
-    public User login(final String username, final String password) throws AuthenticationException {
+    public User login(final ICredential[] credentials) throws AuthenticationException {
         throw new AuthenticationException("Not implemented");
     }
 }
