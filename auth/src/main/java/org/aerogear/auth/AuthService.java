@@ -10,17 +10,34 @@ import java.security.Principal;
  */
 public class AuthService {
 
+
+    private static AuthService INSTANCE;
+
     private final AuthServiceConfig config;
 
     /**
      * Instantiates a new AuthService object
      * @param config Authentication Service configuration
      */
-    public AuthService(final AuthServiceConfig config) {
+    private AuthService(final AuthServiceConfig config) {
         this.config = config;
     }
 
     public Principal login(final String username, final ICredential credentials) throws AuthenticationException {
         return AuthenticatorFactory.getAuthenticator(credentials).authenticate(username, credentials);
     }
+
+    public void logout(Principal principal) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    public static synchronized AuthService getInstance() {
+        if (INSTANCE == null) {
+            // TODO: load the configurations from core and pass it here
+            INSTANCE = new AuthService(null);
+        }
+
+        return INSTANCE;
+    }
+
 }
