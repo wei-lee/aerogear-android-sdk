@@ -1,7 +1,7 @@
 package org.aerogear.auth.impl;
 
 import org.aerogear.auth.IRole;
-import org.aerogear.auth.IUserPrincipal;
+import org.aerogear.auth.credentials.TokenCredentials;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -15,11 +15,13 @@ import java.util.Map;
 public class UserPrincipalImpl extends AbstractPrincipal {
     private final String username;
     private final Map<String, IRole> roles;
+    private final TokenCredentials token;
 
-    private UserPrincipalImpl(final String username, Map<String, IRole> roles, final AbstractAuthenticator authenticator) {
+    private UserPrincipalImpl(final String username, Map<String, IRole> roles, final TokenCredentials token, final AbstractAuthenticator authenticator) {
         super(authenticator);
         this.username = username;
         this.roles = Collections.unmodifiableMap(roles);
+        this.token = token;
     }
 
     /**
@@ -29,6 +31,7 @@ public class UserPrincipalImpl extends AbstractPrincipal {
         private String username;
         private Map<String, IRole> roles = new HashMap<>();
         private AbstractAuthenticator authenticator;
+        private TokenCredentials token;
 
         public Builder() {
         }
@@ -61,8 +64,13 @@ public class UserPrincipalImpl extends AbstractPrincipal {
             return this;
         }
 
+        Builder withToken(TokenCredentials token) {
+            this.token = token;
+            return this;
+        }
+
         UserPrincipalImpl build() {
-            return new UserPrincipalImpl(this.username, this.roles, this.authenticator);
+            return new UserPrincipalImpl(this.username, this.roles, this.token, this.authenticator);
         }
     }
 
@@ -78,5 +86,10 @@ public class UserPrincipalImpl extends AbstractPrincipal {
     @Override
     public String getName() {
         return username;
+    }
+
+    @Override
+    public TokenCredentials getToken() {
+        return token;
     }
 }
