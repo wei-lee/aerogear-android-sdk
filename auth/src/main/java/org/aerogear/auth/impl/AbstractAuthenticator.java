@@ -21,4 +21,8 @@ public class AbstractAuthenticator {
     public Principal authenticate(final String username, ICredential credential) throws AuthenticationException {
         throw new IllegalStateException("Not implemented");
     }
+
+    public void logout(Principal principal) {
+        throw new IllegalStateException("Not implemented");
+    }
 }

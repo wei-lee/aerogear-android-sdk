@@ -12,11 +12,12 @@ import java.util.Map;
 /**
  * This class represent an authenticated user
  */
-public class UserPrincipalImpl implements IUserPrincipal {
+public class UserPrincipalImpl extends AbstractPrincipal {
     private final String username;
     private final Map<String, IRole> roles;
 
-    private UserPrincipalImpl(final String username, Map<String, IRole> roles) {
+    private UserPrincipalImpl(final String username, Map<String, IRole> roles, final AbstractAuthenticator authenticator) {
+        super(authenticator);
         this.username = username;
         this.roles = Collections.unmodifiableMap(roles);
     }
@@ -27,6 +28,7 @@ public class UserPrincipalImpl implements IUserPrincipal {
     static class Builder {
         private String username;
         private Map<String, IRole> roles = new HashMap<>();
+        private AbstractAuthenticator authenticator;
 
         public Builder() {
         }
@@ -54,8 +56,13 @@ public class UserPrincipalImpl implements IUserPrincipal {
             return this;
         }
 
+        Builder withAuthenticator(AbstractAuthenticator authenticator) {
+            this.authenticator = authenticator;
+            return this;
+        }
+
         UserPrincipalImpl build() {
-            return new UserPrincipalImpl(this.username, this.roles);
+            return new UserPrincipalImpl(this.username, this.roles, this.authenticator);
         }
     }
 

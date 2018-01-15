@@ -28,7 +28,7 @@ public class AuthService {
     }
 
     public void logout(Principal principal) {
-        throw new IllegalStateException("Not implemented");
+        AuthenticatorFactory.getAuthenticator(principal).logout(principal);
     }
 
     public static synchronized AuthService getInstance() {
