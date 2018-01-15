@@ -1,7 +1,12 @@
 package org.aerogear.auth;
 
+import org.aerogear.auth.credentials.ICredential;
+import org.aerogear.auth.impl.AuthenticatorFactory;
+
+import java.security.Principal;
+
 /**
- * Entry point for authenticating users
+ * Entry point for authenticating users.
  */
 public class AuthService {
 
@@ -15,7 +20,7 @@ public class AuthService {
         this.config = config;
     }
 
-    public User login(final ICredential[] credentials) throws AuthenticationException {
-        throw new AuthenticationException("Not implemented");
+    public Principal login(final String username, final ICredential credentials) throws AuthenticationException {
+        return AuthenticatorFactory.getAuthenticator(credentials).authenticate(username, credentials);
     }
 }

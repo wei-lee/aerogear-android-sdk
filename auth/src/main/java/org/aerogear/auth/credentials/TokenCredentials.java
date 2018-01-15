@@ -1,8 +1,11 @@
-package org.aerogear.auth;
+package org.aerogear.auth.credentials;
 
 import java.util.Arrays;
 
-public class TokenCredentials {
+/**
+ * Credentials for token based authentication
+ */
+public final class TokenCredentials implements ICredential {
     private final byte[] tokenValue;
 
     public TokenCredentials(final byte[] tokenValue) {

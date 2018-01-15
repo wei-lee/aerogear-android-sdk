@@ -1,47 +1,51 @@
-package org.aerogear.auth;
+package org.aerogear.auth.impl;
+
+import org.aerogear.auth.IRole;
+import org.aerogear.auth.IUserPrincipal;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This class represent an authenticated username
+ * This class represent an authenticated user
  */
-public class User {
+public class UserPrincipalImpl implements IUserPrincipal {
     private final String username;
     private final Map<String, IRole> roles;
 
-    private User(final String username, Map<String, IRole> roles) {
+    private UserPrincipalImpl(final String username, Map<String, IRole> roles) {
         this.username = username;
         this.roles = Collections.unmodifiableMap(roles);
     }
 
     /**
-     * Builds and return a User object
+     * Builds and return a UserPrincipalImpl object
      */
-    public static class Builder {
+    static class Builder {
         private String username;
-        private Map<String, IRole> roles;
+        private Map<String, IRole> roles = new HashMap<>();
 
         public Builder() {
         }
 
-        public Builder withUsername(final String username) {
+        Builder withUsername(final String username) {
             this.username = username;
             return this;
         }
 
-        public Builder withRole(final IRole role) {
+        Builder withRole(final IRole role) {
             this.roles.put(role.getRoleID(), role);
             return this;
         }
 
-        public Builder withRoles(final IRole[] roles) {
+        Builder withRoles(final IRole[] roles) {
             return withRoles(Arrays.asList(roles));
         }
 
-        public Builder withRoles(final Collection<IRole> roles) {
+        Builder withRoles(final Collection<IRole> roles) {
 
             for (IRole role : roles) {
                 this.withRole(role);
@@ -50,8 +54,8 @@ public class User {
             return this;
         }
 
-        public User build() {
-            return new User(this.username, this.roles);
+        UserPrincipalImpl build() {
+            return new UserPrincipalImpl(this.username, this.roles);
         }
     }
 
@@ -59,7 +63,13 @@ public class User {
      * Returns <code>true</code> if the user has the passed in role.
      * @return true or false
      */
+    @Override
     public boolean hasRole(IRole role) {
         return roles.containsKey(role.getRoleID());
+    }
+
+    @Override
+    public String getName() {
+        return username;
     }
 }

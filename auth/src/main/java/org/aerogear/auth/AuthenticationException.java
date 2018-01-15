@@ -1,7 +1,7 @@
 package org.aerogear.auth;
 
 /**
- * Exception thrown when an error occurres authenticating a user.
+ * Exception thrown when an error occurs authenticating a user.
  */
 public class AuthenticationException extends Exception {
 
