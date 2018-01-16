@@ -1,4 +1,4 @@
-package org.aerogear.auth.impl;
+package org.aerogear.auth;
 
 import org.aerogear.auth.AuthServiceConfig;
 import org.aerogear.auth.credentials.ICredential;
@@ -13,18 +13,17 @@ public class AbstractAuthenticator {
 
     private final AuthServiceConfig config;
 
-    AbstractAuthenticator(final AuthServiceConfig config) {
+    public AbstractAuthenticator(final AuthServiceConfig config) {
         this.config = config;
     }
 
     /**
      * This method must be overridden with the custom authentication for the given credential.
      *
-     * @param username username to be authenticated
      * @param credential user credential
      * @return the authenticated principal
      */
-    public Future<Principal> authenticate(final String username, final ICredential credential) {
+    public Principal authenticate(final ICredential credential) throws AuthenticationException {
         throw new IllegalStateException("Not implemented");
     }
 
@@ -32,7 +31,7 @@ public class AbstractAuthenticator {
      * Logout the given principal
      * @param principal principal to be log out
      */
-    public Future<Void> logout(final Principal principal) {
+    public void logout(final Principal principal) {
         throw new IllegalStateException("Not implemented");
     }
 

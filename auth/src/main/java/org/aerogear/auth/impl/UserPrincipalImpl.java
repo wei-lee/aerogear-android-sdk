@@ -1,8 +1,9 @@
 package org.aerogear.auth.impl;
 
-import org.aerogear.auth.CredentialsType;
+import org.aerogear.auth.AbstractAuthenticator;
+import org.aerogear.auth.AbstractPrincipal;
 import org.aerogear.auth.IRole;
-import org.aerogear.auth.credentials.TokenCredentials;
+import org.aerogear.auth.credentials.OIDCCredentials;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -28,52 +29,33 @@ public class UserPrincipalImpl extends AbstractPrincipal {
     private final Map<String, IRole> roles;
 
     /**
-     * Authentication token associated with this principal.
-     */
-    private final TokenCredentials identityToken;
-    private final TokenCredentials accessToken;
-    private final TokenCredentials refreshToken;
-
-    /**
      * Builds a new UserPrincipalImpl object
      *
      * @param username the username of the authenticated user
      * @param email the email of the authenticated user
      * @param roles roles assigned to the user
-     * @param identityToken identityToken as returned by keycloak
-     * @param accessToken accessToken as returned by keycloak
-     * @param refreshToken refreshToken as returned by keycloak
-     * @param credentialsType the authenticator that authenticated this user
+     * @param authenticator the authenticator that authenticated this user
      */
-    private UserPrincipalImpl(final String username,
+    protected UserPrincipalImpl(final String username,
                               final String email,
                               final Map<String, IRole> roles,
-                              final TokenCredentials identityToken,
-                              final TokenCredentials accessToken,
-                              final TokenCredentials refreshToken,
-                              final CredentialsType credentialsType) {
-        super(credentialsType);
+                              final AbstractAuthenticator authenticator) {
+        super(authenticator);
         this.username = username;
         this.email = email;
         this.roles = Collections.unmodifiableMap(new HashMap<String, IRole>(roles));
-        this.identityToken = identityToken;
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken;
     }
 
     /**
      * Builds and return a UserPrincipalImpl object
      */
     static class Builder {
-        private String username;
-        private String email;
-        private Map<String, IRole> roles = new HashMap<>();
-        private CredentialsType credentialsType;
-        private TokenCredentials identityToken;
-        private TokenCredentials accessToken;
-        private TokenCredentials refreshToken;
+        protected String username;
+        protected String email;
+        protected Map<String, IRole> roles = new HashMap<>();
+        protected AbstractAuthenticator authenticator;
 
-        public Builder() {
+        protected Builder() {
         }
 
         Builder withUsername(final String username) {
@@ -92,35 +74,26 @@ public class UserPrincipalImpl extends AbstractPrincipal {
         }
 
         Builder withRoles(final IRole[] roles) {
-            return withRoles(Arrays.asList(roles));
+            if (roles != null) {
+                return withRoles(Arrays.asList(roles));
+            } else {
+                return this;
+            }
         }
 
         Builder withRoles(final Collection<IRole> roles) {
 
-            for (IRole role : roles) {
-                this.withRole(role);
+            if (roles != null) {
+                for (IRole role : roles) {
+                    this.withRole(role);
+                }
             }
 
             return this;
         }
 
-        Builder withAuthenticator(CredentialsType credentialsType) {
-            this.credentialsType = credentialsType;
-            return this;
-        }
-
-        Builder withIdentityToken(TokenCredentials identityToken) {
-            this.identityToken = identityToken;
-            return this;
-        }
-
-        Builder withAccessToken(TokenCredentials accessToken) {
-            this.accessToken = accessToken;
-            return this;
-        }
-
-        Builder withRefreshToken(TokenCredentials refreshToken) {
-            this.refreshToken = refreshToken;
+        Builder withAuthenticator(AbstractAuthenticator authenticator) {
+            this.authenticator = authenticator;
             return this;
         }
 
@@ -129,10 +102,7 @@ public class UserPrincipalImpl extends AbstractPrincipal {
                     this.username,
                     this.email,
                     this.roles,
-                    this.identityToken,
-                    this.accessToken,
-                    this.refreshToken,
-                    this.credentialsType);
+                    this.authenticator);
         }
     }
 
@@ -150,23 +120,22 @@ public class UserPrincipalImpl extends AbstractPrincipal {
         return username;
     }
 
-    @Override
-    public TokenCredentials getIdentityToken() {
-        return identityToken;
-    }
-
-    @Override
-    public TokenCredentials getAccessToken() {
-        return accessToken;
-    }
-
-    @Override
-    public TokenCredentials getRefreshToken() {
-        return refreshToken;
-    }
 
     @Override
     public Collection<IRole> getRoles() {
         return roles.values();
+    }
+
+    public static Builder newUser() {
+        return new Builder();
+    }
+
+    @Override
+    public String toString() {
+        return "UserPrincipalImpl{" +
+                "username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles.values() +
+                '}';
     }
 }

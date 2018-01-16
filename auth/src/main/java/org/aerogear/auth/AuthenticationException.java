@@ -5,6 +5,10 @@ package org.aerogear.auth;
  */
 public class AuthenticationException extends Exception {
 
+    public AuthenticationException(final Throwable cause) {
+        super(cause);
+    }
+
     public AuthenticationException(final String message) {
         super(message);
     }

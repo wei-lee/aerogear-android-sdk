@@ -1,7 +1,8 @@
 package org.aerogear.auth;
 
 import org.aerogear.auth.credentials.ICredential;
-import org.aerogear.auth.impl.AuthenticatorFactory;
+import org.aerogear.auth.impl.BrowserAuthenticatorImpl;
+import org.aerogear.auth.impl.OICDTokenAuthenticatorImpl;
 
 import java.security.Principal;
 import java.util.concurrent.Future;
@@ -16,14 +17,22 @@ public class AuthService {
      */
     private static AuthService INSTANCE;
 
-    private final AuthenticatorFactory authenticatorFactory;
+    private AuthenticationChain authenticatorChain;
 
     /**
      * Instantiates a new AuthService object
      * @param config Authentication Service configuration
      */
     private AuthService(final AuthServiceConfig config) {
-        this.authenticatorFactory = new AuthenticatorFactory(config);
+        this.authenticatorChain = AuthenticationChain
+                .newChain()
+                .with(new OICDTokenAuthenticatorImpl(config))
+                .with(new BrowserAuthenticatorImpl(config))
+                .build();
+    }
+
+    private void configureDefaultAuthenticationChain(final AuthenticationChain authenticationChain) {
+
     }
 
     /**
@@ -33,12 +42,11 @@ public class AuthService {
      *
      * The login will be asynchronous.
      *
-     * @param username The username
      * @param credentials the credential
      * @return a user principal
      */
-    public Future<Principal> login(final String username, final ICredential credentials) {
-        return authenticatorFactory.getAuthenticator(credentials).authenticate(username, credentials);
+    public Future<Principal> login(final ICredential credentials) {
+        return authenticatorChain.authenticate(credentials);
     }
 
     /**
@@ -48,7 +56,15 @@ public class AuthService {
      * @param principal principal to be logged out
      */
     public Future<Void> logout(Principal principal) {
-        return authenticatorFactory.getAuthenticator(principal).logout(principal);
+        if (principal instanceof AbstractPrincipal) {
+            return authenticatorChain.logout(principal);
+        }
+
+        throw new IllegalArgumentException("Unknown principal type " + principal.getClass().getName());
+    }
+
+    public void setAuthenticatorChain(AuthenticationChain newChain) {
+        this.authenticatorChain = newChain;
     }
 
     /**

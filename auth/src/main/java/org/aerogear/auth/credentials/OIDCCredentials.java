@@ -1,16 +1,14 @@
 package org.aerogear.auth.credentials;
 
-import org.aerogear.auth.CredentialsType;
-
 import java.util.Arrays;
 
 /**
  * Credentials for token based authentication
  */
-public final class TokenCredentials implements ICredential {
+public final class OIDCCredentials implements ICredential {
     private final byte[] tokenValue;
 
-    public TokenCredentials(final byte[] tokenValue) {
+    public OIDCCredentials(final byte[] tokenValue) {
         this.tokenValue = Arrays.copyOf(tokenValue, tokenValue.length);
 
         parseToken();
@@ -37,10 +35,5 @@ public final class TokenCredentials implements ICredential {
      */
     public boolean isExpired() {
         throw new IllegalStateException("Not yet implemented");
-    }
-
-    @Override
-    public CredentialsType getType() {
-        return CredentialsType.TOKEN;
     }
 }

@@ -1,6 +1,6 @@
 package org.aerogear.auth.utils;
 
-import org.aerogear.auth.credentials.TokenCredentials;
+import org.aerogear.auth.credentials.OIDCCredentials;
 
 /**
  * Saves, retrieves and delete a token.
@@ -9,7 +9,7 @@ public class TokenPersistor {
     private TokenPersistor() {
     }
 
-    public static TokenCredentials load() {
+    public static OIDCCredentials load() {
         throw new IllegalStateException("Not yet implemented");
     }
 
@@ -17,7 +17,7 @@ public class TokenPersistor {
      * Saves a token
      * @param token token to be saved
      */
-    public static void save(TokenCredentials token) {
+    public static void save(OIDCCredentials token) {
         throw new IllegalStateException("Not yet implemented");
     }
 
@@ -25,7 +25,7 @@ public class TokenPersistor {
      * Deletes a token
      * @param token token to be deleted
      */
-    public static void delete(TokenCredentials token) {
+    public static void delete(OIDCCredentials token) {
         throw new IllegalStateException("Not yet implemented");
     }
 }
