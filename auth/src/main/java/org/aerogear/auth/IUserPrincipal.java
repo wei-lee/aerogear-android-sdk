@@ -3,6 +3,7 @@ package org.aerogear.auth;
 import org.aerogear.auth.credentials.TokenCredentials;
 
 import java.security.Principal;
+import java.util.Collection;
 
 /**
  * Public interface for user principals.
@@ -26,5 +27,11 @@ public interface IUserPrincipal extends Principal {
      * Returns the session token.
      * @return the session token
      */
-    TokenCredentials getToken();
+    TokenCredentials getIdentityToken();
+
+    TokenCredentials getAccessToken();
+
+    TokenCredentials getRefreshToken();
+
+    Collection<IRole> getRoles();
 }

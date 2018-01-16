@@ -4,6 +4,7 @@ import org.aerogear.auth.credentials.ICredential;
 import org.aerogear.auth.impl.AuthenticatorFactory;
 
 import java.security.Principal;
+import java.util.concurrent.Future;
 
 /**
  * Entry point for authenticating users.
@@ -15,38 +16,39 @@ public class AuthService {
      */
     private static AuthService INSTANCE;
 
-    /**
-     * Authentication service config.
-     */
-    private final AuthServiceConfig config;
+    private final AuthenticatorFactory authenticatorFactory;
 
     /**
      * Instantiates a new AuthService object
      * @param config Authentication Service configuration
      */
     private AuthService(final AuthServiceConfig config) {
-        this.config = config;
+        this.authenticatorFactory = new AuthenticatorFactory(config);
     }
 
     /**
-     * Log in the user with the given credential.
+     * Log in the user with the given credential. Flow to be used to authenticate the user is automatically
+     * selected by analysing the received credentials. If the credentials are null,
+     * the browser will be open asking for authentication
+     *
+     * The login will be asynchronous.
      *
      * @param username The username
      * @param credentials the credential
      * @return a user principal
-     * @throws AuthenticationException throws if the authentication fails
      */
-    public Principal login(final String username, final ICredential credentials) throws AuthenticationException {
-        return AuthenticatorFactory.getAuthenticator(credentials).authenticate(username, credentials);
+    public Future<Principal> login(final String username, final ICredential credentials) {
+        return authenticatorFactory.getAuthenticator(credentials).authenticate(username, credentials);
     }
 
     /**
      * Log out the given principal.
+     * The logout will be asynchronous.
      *
      * @param principal principal to be logged out
      */
-    public void logout(Principal principal) {
-        AuthenticatorFactory.getAuthenticator(principal).logout(principal);
+    public Future<Void> logout(Principal principal) {
+        return authenticatorFactory.getAuthenticator(principal).logout(principal);
     }
 
     /**
@@ -56,7 +58,7 @@ public class AuthService {
      */
     public static synchronized AuthService getInstance() {
         if (INSTANCE == null) {
-            // TODO: load the configurations from core and pass it here
+            // FIXME: load the configurations from core and pass it here
             INSTANCE = new AuthService(null);
         }
 

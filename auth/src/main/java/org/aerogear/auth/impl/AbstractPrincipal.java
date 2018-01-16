@@ -1,20 +1,29 @@
 package org.aerogear.auth.impl;
 
+import org.aerogear.auth.CredentialsType;
 import org.aerogear.auth.IUserPrincipal;
 
 /**
  * Base class for aerogear principals
  */
 abstract class AbstractPrincipal implements IUserPrincipal {
-    private final AbstractAuthenticator authenticator;
 
     /**
-     * Authenticator used to authenticate the principal.
-     *
-     * @param authenticator the authenticator
+     * The authenticator that was used to authenticate this principal.
      */
-    AbstractPrincipal (AbstractAuthenticator authenticator) {
-        this.authenticator = authenticator;
+    private final CredentialsType credentialsType;
+
+    /**
+     * Type of credentials used to authenticate this user.
+     *
+     * @param credentialsType the type of credentials
+     */
+    AbstractPrincipal (CredentialsType credentialsType) {
+        if (credentialsType == null) {
+            throw new NullPointerException("Credentials type can't be null");
+        }
+
+        this.credentialsType = credentialsType;
     }
 
     /**
@@ -22,7 +31,7 @@ abstract class AbstractPrincipal implements IUserPrincipal {
      *
      * @return the authenticator used to authenticate the principal
      */
-    public AbstractAuthenticator getAuthenticator() {
-        return authenticator;
+    public CredentialsType getCredentialsType() {
+        return credentialsType;
     }
 }

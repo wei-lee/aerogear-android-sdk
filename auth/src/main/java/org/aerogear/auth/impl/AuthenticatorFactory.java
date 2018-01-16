@@ -1,32 +1,63 @@
 package org.aerogear.auth.impl;
 
+import org.aerogear.auth.AuthServiceConfig;
+import org.aerogear.auth.CredentialsType;
 import org.aerogear.auth.credentials.ICredential;
-import org.aerogear.auth.credentials.PasswordCredentials;
-import org.aerogear.auth.credentials.TokenCredentials;
 
 import java.security.Principal;
+import java.util.HashMap;
+import java.util.Map;
 
-public class AuthenticatorFactory {
-    private AuthenticatorFactory() {
+/**
+ * Factory for authentication handlers.
+ */
+public final class AuthenticatorFactory {
+
+    private final AuthServiceConfig config;
+
+    private final Map<CredentialsType, AbstractAuthenticator> authenticatorsCache = new HashMap<>();
+
+    /**
+     * Instantiates a new AuthenticatorFactory object and configures it.
+     * @param config authentication service configuration
+     */
+    public AuthenticatorFactory(final AuthServiceConfig config) {
+        this.config = config;
+        this.authenticatorsCache.put(CredentialsType.BROWSER, new BrowserAuthenticatorImpl(config));
+        this.authenticatorsCache.put(CredentialsType.TOKEN, new TokenAuthenticatorImpl(config));
     }
 
-    public static AbstractAuthenticator getAuthenticator(final ICredential credentials) {
-        if (credentials instanceof PasswordCredentials) {
-            return new PasswordAuthenticatorImpl();
+    /**
+     * Returns the authenticator for the given credentials.
+     * If credentials are null, browswer authenticator is returned.
+     *
+     * @param credentials credentials to be authenticated.
+     * @return appropriate authenticator
+     */
+    public AbstractAuthenticator getAuthenticator(final ICredential credentials) {
+        if (credentials == null) {
+            // No credentials provided, browser based authentication needed
+            return authenticatorsCache.get(CredentialsType.BROWSER);
         }
 
-        if (credentials instanceof TokenCredentials) {
-            return new TokenAuthenticatorImpl();
-        }
-
-        throw new IllegalArgumentException("Invalid credential type (" + credentials.getClass().getName() + ")");
+        return getAuthenticator(credentials.getType());
     }
 
-    public static AbstractAuthenticator getAuthenticator(final Principal principal) {
+    /**
+     * Returns the authenticator that was used to authenticate the given principal.
+     *
+     * @param principal
+     * @return the authenticator that was used to authenticate the given principal
+     */
+    public AbstractAuthenticator getAuthenticator(final Principal principal) {
         if (principal instanceof AbstractPrincipal) {
-            ((AbstractPrincipal) principal).getAuthenticator().logout(principal);
+            return getAuthenticator(((AbstractPrincipal) principal).getCredentialsType());
         }
 
         throw new IllegalArgumentException("Invalid principal type " + (principal.getClass().getName()));
+    }
+
+    public AbstractAuthenticator getAuthenticator(final CredentialsType credentialsType) {
+        return authenticatorsCache.get(credentialsType);
     }
 }

@@ -1,14 +1,21 @@
 package org.aerogear.auth.impl;
 
-import org.aerogear.auth.AuthenticationException;
+import org.aerogear.auth.AuthServiceConfig;
 import org.aerogear.auth.credentials.ICredential;
 
 import java.security.Principal;
+import java.util.concurrent.Future;
 
 /**
  * Base class for all authenticators
  */
 public class AbstractAuthenticator {
+
+    private final AuthServiceConfig config;
+
+    AbstractAuthenticator(final AuthServiceConfig config) {
+        this.config = config;
+    }
 
     /**
      * This method must be overridden with the custom authentication for the given credential.
@@ -16,9 +23,8 @@ public class AbstractAuthenticator {
      * @param username username to be authenticated
      * @param credential user credential
      * @return the authenticated principal
-     * @throws AuthenticationException
      */
-    public Principal authenticate(final String username, ICredential credential) throws AuthenticationException {
+    public Future<Principal> authenticate(final String username, final ICredential credential) {
         throw new IllegalStateException("Not implemented");
     }
 
@@ -26,7 +32,15 @@ public class AbstractAuthenticator {
      * Logout the given principal
      * @param principal principal to be log out
      */
-    public void logout(Principal principal) {
+    public Future<Void> logout(final Principal principal) {
         throw new IllegalStateException("Not implemented");
+    }
+
+    /**
+     * Returns the authentication service configuration
+     * @return the authentication service configuration
+     */
+    protected AuthServiceConfig getConfig() {
+        return config;
     }
 }

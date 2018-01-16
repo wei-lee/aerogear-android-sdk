@@ -1,5 +1,7 @@
 package org.aerogear.auth.credentials;
 
+import org.aerogear.auth.CredentialsType;
+
 import java.util.Arrays;
 
 /**
@@ -35,5 +37,10 @@ public final class TokenCredentials implements ICredential {
      */
     public boolean isExpired() {
         throw new IllegalStateException("Not yet implemented");
+    }
+
+    @Override
+    public CredentialsType getType() {
+        return CredentialsType.TOKEN;
     }
 }
