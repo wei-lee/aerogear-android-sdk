@@ -15,7 +15,7 @@ For this guide, let's assume that your two Android apps are called **Email App**
 
 ==== Setup Keycloak
 
-include::keycloak.adoc[]
+include::https://raw.githubusercontent.com/aerogear/aerogear-android-sdk/master/docs/getting-started/sso/keycloak.adoc[]
 
 ==== Configuration File in the Mobile Apps
 From following the link:auth.adoc[AeroGear Services Auth SDK] setup, there should be a configuration file, `mobile-services.json`, inside the assets directory of your Android project.  It's important that the Keycloak configuration defined in this file matches the Keycloak client that the app intends to use. +
